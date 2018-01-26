@@ -1,15 +1,16 @@
 /*!
- * typeahead.js 1.2.0
- * https://github.com/twitter/typeahead.js
- * Copyright 2013-2017 Twitter, Inc. and other contributors; Licensed MIT
+ * typeahead.js 1.2.1
+ * https://github.com/corejavascript/typeahead.js
+ * Copyright 2013-2018 Twitter, Inc. and other contributors; Licensed MIT
  */
+
 
 (function(root, factory) {
     if (typeof define === "function" && define.amd) {
         define([ "jquery" ], function(a0) {
             return factory(a0);
         });
-    } else if (typeof exports === "object") {
+    } else if (typeof module === "object" && module.exports) {
         module.exports = factory(require("jquery"));
     } else {
         factory(root["jQuery"]);
@@ -195,7 +196,7 @@
         }
         function buildHtml(c) {
             return {
-                wrapper: '<span class="' + c.wrapper + '"></span>',
+                wrapper: '<div class="' + c.wrapper + '"></div>',
                 menu: '<div role="listbox" class="' + c.menu + '"></div>'
             };
         }
@@ -489,14 +490,19 @@
             www.mixin(this);
             this.$hint = $(o.hint);
             this.$input = $(o.input);
-            this.$input.attr({
-                "aria-activedescendant": "",
-                "aria-owns": this.$input.attr("id") + "_listbox",
+            this.$inputHolder = $("<div></div>").insertBefore(this.$input);
+            this.$inputHolder.append(this.$input);
+            this.$inputHolder.attr({
                 role: "combobox",
-                "aria-readonly": "true",
+                "aria-owns": this.$input.attr("id") + "_listbox",
+                "aria-controls": this.$input.attr("id") + "_listbox",
+                "aria-haspopup": "listbox",
+                "aria-expanded": "false"
+            });
+            this.$input.attr({
+                "aria-controls": this.$input.attr("id") + "_listbox",
                 "aria-autocomplete": "list"
             });
-            $(www.menu).attr("id", this.$input.attr("id") + "_listbox");
             this.query = this.$input.val();
             this.queryWhenFocused = this.hasFocus() ? this.query : null;
             this.$overflowHelper = buildOverflowHelper(this.$input);
@@ -575,7 +581,11 @@
                 }
             },
             _updateDescendent: function updateDescendent(event, id) {
-                this.$input.attr("aria-activedescendant", id);
+                if (id) {
+                    this.$input.attr("aria-activedescendant", id);
+                } else {
+                    this.$input.removeAttr("aria-activedescendant");
+                }
             },
             bind: function() {
                 var that = this, onBlur, onFocus, onKeydown, onInput;
@@ -611,6 +621,9 @@
             setQuery: function setQuery(val, silent) {
                 this.setInputValue(val);
                 this._setQuery(val, silent);
+            },
+            setAriaExpanded: function setAriaExpanded(expanded) {
+                this.$input.attr("aria-expanded", expanded);
             },
             hasQueryChangedSinceLastFocus: function hasQueryChangedSinceLastFocus() {
                 return this.query !== this.queryWhenFocused;
@@ -673,7 +686,7 @@
         });
         return Input;
         function buildOverflowHelper($input) {
-            return $('<pre aria-hidden="true"></pre>').css({
+            return $('<div aria-hidden="true"></div>').css({
                 position: "absolute",
                 visibility: "hidden",
                 whiteSpace: "pre",
@@ -1190,6 +1203,7 @@
                 var $input, $menu;
                 $input = this.input.$input || $("<div>");
                 $menu = this.menu.$node || $("<div>");
+                $menu.attr("id", $input.attr("id") + "_listbox");
                 $input.on("blur.tt", function($e) {
                     var active, isActive, hasActive;
                     active = document.activeElement;
@@ -1356,6 +1370,7 @@
                     this.menu.open();
                     this._updateHint();
                     this.eventBus.trigger("open");
+                    this.input.setAriaExpanded("true");
                 }
                 return this.isOpen();
             },
@@ -1365,6 +1380,7 @@
                     this.input.clearHint();
                     this.input.resetInputValue();
                     this.eventBus.trigger("close");
+                    this.input.setAriaExpanded("false");
                 }
                 return !this.isOpen();
             },

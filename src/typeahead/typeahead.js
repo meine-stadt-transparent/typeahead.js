@@ -99,6 +99,9 @@ var Typeahead = (function() {
       $input = this.input.$input || $('<div>');
       $menu = this.menu.$node || $('<div>');
 
+      // For aria-owns
+      $menu.attr('id', $input.attr('id') + '_listbox');
+
       // #705: if there's scrollable overflow, ie doesn't support
       // blur cancellations when the scrollbar is clicked
       //
@@ -336,6 +339,7 @@ var Typeahead = (function() {
         this.menu.open();
         this._updateHint();
         this.eventBus.trigger('open');
+        this.input.setAriaExpanded('true');
       }
 
       return this.isOpen();
@@ -347,6 +351,7 @@ var Typeahead = (function() {
         this.input.clearHint();
         this.input.resetInputValue();
         this.eventBus.trigger('close');
+        this.input.setAriaExpanded('false');
       }
       return !this.isOpen();
     },

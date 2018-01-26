@@ -46,7 +46,7 @@ var WWW = (function() {
 
   function buildHtml(c) {
     return {
-      wrapper: '<span class="' + c.wrapper + '"></span>',
+      wrapper: '<div class="' + c.wrapper + '"></div>',
       menu: '<div role="listbox" class="' + c.menu + '"></div>'
     };
   }

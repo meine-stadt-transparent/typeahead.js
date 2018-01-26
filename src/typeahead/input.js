@@ -33,16 +33,20 @@ var Input = (function() {
 
     this.$hint = $(o.hint);
     this.$input = $(o.input);
-
-    this.$input.attr({
-      'aria-activedescendant': '',
-      'aria-owns': this.$input.attr('id') + '_listbox',
-      role: 'combobox',
-      'aria-readonly': 'true',
-      'aria-autocomplete': 'list'
+    this.$inputHolder = $('<div></div>').insertBefore(this.$input);
+    this.$inputHolder.append(this.$input);
+    this.$inputHolder.attr({
+        'role': 'combobox',
+        'aria-owns': this.$input.attr('id') + '_listbox',
+        'aria-controls': this.$input.attr('id') + '_listbox',
+        'aria-haspopup': 'listbox',
+        'aria-expanded': 'false'
     });
 
-    $(www.menu).attr('id', this.$input.attr('id') + '_listbox');
+    this.$input.attr({
+      'aria-controls': this.$input.attr('id') + '_listbox',
+      'aria-autocomplete': 'list'
+    });
 
     // the query defaults to whatever the value of the input is
     // on initialization, it'll most likely be an empty string
@@ -172,7 +176,11 @@ var Input = (function() {
     },
 
     _updateDescendent: function updateDescendent(event, id) {
-      this.$input.attr('aria-activedescendant', id);
+      if (id) {
+        this.$input.attr('aria-activedescendant', id);
+      } else {
+        this.$input.removeAttr('aria-activedescendant');
+      }
     },
 
     // ### public
@@ -230,6 +238,10 @@ var Input = (function() {
     setQuery: function setQuery(val, silent) {
       this.setInputValue(val);
       this._setQuery(val, silent);
+    },
+
+    setAriaExpanded: function setAriaExpanded(expanded) {
+      this.$input.attr('aria-expanded', expanded);
     },
 
     hasQueryChangedSinceLastFocus: function hasQueryChangedSinceLastFocus() {
@@ -324,7 +336,7 @@ var Input = (function() {
   // ----------------
 
   function buildOverflowHelper($input) {
-    return $('<pre aria-hidden="true"></pre>')
+    return $('<div aria-hidden="true"></div>')
     .css({
       // position helper off-screen
       position: 'absolute',
