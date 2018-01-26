@@ -4,9 +4,10 @@
 [![bitHound Dependencies](https://www.bithound.io/github/corejavascript/typeahead.js/badges/dependencies.svg)](https://www.bithound.io/github/corejavascript/typeahead.js/master/dependencies/npm)
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/iron/iron/master/LICENSE)
 
-# [corejs-typeahead](https://typeahead.js.org/)
+# [corejs-typeahead](https://typeahead.js.org/) / Meine Stadt Transparent
 
-This is a maintained fork of [twitter.com](https://twitter.com)'s autocomplete search library, [typeahead.js](https://github.com/twitter/typeahead.js).
+CoreJS-Typeahead is a maintained fork of [twitter.com](https://twitter.com)'s autocomplete search library, [typeahead.js](https://github.com/twitter/typeahead.js).
+This repository modifies CoreJS-Typeahead for better compliance with HTML standards, especially with WAI-ARIA 1.1.
 
 The typeahead.js library consists of 2 components: the suggestion engine,
 [Bloodhound](https://github.com/corejavascript/typeahead.js/blob/master/doc/bloodhound.md), and the UI view, [Typeahead](https://github.com/corejavascript/typeahead.js/blob/master/doc/jquery_typeahead.md).
